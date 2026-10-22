@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101820">
+  <title>TurtleAI</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101820;
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 20px;
+      border-bottom: 1px solid #293640;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      background: #76e6a3;
+      color: #101820;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 25px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      color: #aab8c2;
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 28px 18px;
+    }
+
+    .welcome {
+      text-align: center;
+      padding: 50px 5px 30px;
+    }
+
+    .turtle {
+      font-size: 65px;
+    }
+
+    .welcome h2 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .welcome p {
+      color: #aab8c2;
+      line-height: 1.6;
+    }
+
+    #chat {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 20px;
+    }
+
+    .message {
+      padding: 14px;
+      border-radius: 15px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .user {
+      background: #245d45;
+      align-self: flex-end;
+      max-width: 90%;
+    }
+
+    .bot {
+      background: #202d38;
+      align-self: flex-start;
+      max-width: 95%;
+    }
+
+
+.composer {
+  display: flex;
+  gap: 8px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 18px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: #101820;
+  z-index: 100;
+}
+
+main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 28px 18px 110px;
+}
+
+    input {
+      min-width: 0;
+      flex: 1;
+      padding: 15px;
+      border: 1px solid #3b4b57;
+      border-radius: 14px;
+      background: #202d38;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 0 18px;
+      background: #76e6a3;
+      color: #101820;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🐢</div>
+    <div>
+      <h1>TurtleAI</h1>
+      <p>Your ideas, one conversation away.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome" id="welcome">
+      <div class="turtle">🐢</div>
+      <h2>Welcome to TurtleAI</h2>
+      <p>Your AI assistant starts here.<br>
+      Ask a question to try the chat demo.</p>
+    </section>
+
+    <section id="chat" aria-live="polite"></section>
+
+    <form class="composer" id="form">
+      <input id="prompt" placeholder="Message TurtleAI..."
+        aria-label="Your message" autocomplete="off" required>
+      <button type="submit">Send</button>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById("form");
+    const promptInput = document.getElementById("prompt");
+    const chat = document.getElementById("chat");
+const STORAGE_KEY = "turtleai-chat-history";
+    const welcome = document.getElementById("welcome");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const message = promptInput.value.trim();
+      if (!message) return;
+
+      welcome.style.display = "none";
+      addMessage(message, "user");
+
+      addMessage(
+        "Thanks for trying TurtleAI! This is the first demo. " +
+        "We'll connect a real AI model in a later step.",
+        "bot"
+      );
+
+      promptInput.value = "";
+    });
+
+    
+
+const savedHistory = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) || "[]"
+);
+
+if (savedHistory.length > 0) {
+  welcome.style.display = "none";
+
+  savedHistory.forEach(function(message) {
+    const bubble = document.createElement("div");
+    bubble.className = "message " + message.type;
+    bubble.textContent = message.text;
+    chat.appendChild(bubble);
+  });
+}
+function addMessage(text, type) {
+  const bubble = document.createElement("div");
+  bubble.className = "message " + type;
+  bubble.textContent = text;
+  chat.appendChild(bubble);
+
+  const history = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "[]"
+  );
+
+  history.push({ text: text, type: type });
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(history)
+  );
+
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: "smooth"
+  });
+}
+  </script>
+</body>
+</html>
